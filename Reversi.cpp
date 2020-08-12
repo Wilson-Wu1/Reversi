@@ -1,28 +1,47 @@
 #include <iostream>
 #include <string>
 #include <list>
-
+#include <chrono>
+#include <vector>
 using namespace std;
+#define RESET   "\033[0m"
+#define BLACK   "\033[30m"      /* Black */
+#define RED     "\033[31m"      /* Red */
+#define GREEN   "\033[32m"      /* Green */
+#define YELLOW  "\033[33m"      /* Yellow */
+#define BLUE    "\033[34m"      /* Blue */
 
 class Board {
-public:
+public:	
+	/*
 	int tiles2[8][8] = { { 2,0,0,0,0,0,0,0 },
-						{ 2,0,0,0,0,0,0,0 },
-						{ 2,0,1,0,0,1,0,0 },
-						{ 2,0,1,2,2,0,0,0 },
-						{ 2,0,0,2,2,1,0,0 },
-						{ 2,0,0,0,0,0,0,0 },
-						{ 2,0,0,0,0,0,0,0 },
-						{ 0, 0, 0, 0, 0, 0, 0, 0 } };
-	string finalMoves[8];
-	int tiles1[8][8] = { { 2,1,1,1,1,1,1,1 },
-						{ 2,1,1,1,1,2,1,1 },
-						{ 1,1,1,1,2,1,1,1 },
-						{ 2,1,1,2,2,1,1,1 },
-						{ 1,1,0,2,2,2,2,2 },
-						{ 2,2,1,1,1,1,1,1 },
-						{ 1,1,1,1,1,1,1,1 },
-						{ 1,1,1,1,1,1,1,1 } };
+						{ 2,2,0,0,0,0,0,0 },
+						{ 2,2,1,0,0,1,0,0 },
+						{ 2,2,1,2,2,0,0,0 },
+						{ 2,2,0,2,2,1,0,0 },
+						{ 2,2,0,0,0,0,0,0 },
+						{ 2,2,0,0,0,0,0,0 },
+						{ 0, 1, 0, 0, 0, 0, 0, 0 } };
+
+	int tiles1[8][8] = { { 1,1,1,2,1,1,2,1 },
+						{ 2,1,1,2,1,2,1,1 },
+						{ 1,1,1,2,2,1,1,1 },
+						{ 2,1,1,2,2,1,1,2 },
+						{ 2,1,2,2,2,2,2,2 },
+						{ 2,2,1,2,1,2,1,1 },
+						{ 1,1,2,2,2,1,1,1 },
+						{ 2,2,2,0,2,2,2,2 } };
+	int reset2[8][8] = { { 1,1,1,2,1,1,2,1 },
+						{ 2,1,1,2,1,2,1,1 },
+						{ 1,1,1,2,2,1,1,1 },
+						{ 2,1,1,2,2,1,1,2 },
+						{ 2,1,2,2,2,2,2,2 },
+						{ 2,2,1,2,1,2,1,1 },
+						{ 1,1,2,2,2,1,1,1 },
+						{ 2,2,2,0,2,2,2,2 } };
+
+	*/
+
 	int tiles[8][8] = { { 0,0,0,0,0,0,0,0 },
 					{ 0,0,0,0,0,0,0,0 },
 					{ 0,0,0,0,0,0,0,0 },
@@ -31,6 +50,16 @@ public:
 					{ 0,0,0,0,0,0,0,0 },
 					{ 0,0,0,0,0,0,0,0 },
 					{ 0,0,0,0,0,0,0,0 } };
+	
+	int reset[8][8] = { { 0,0,0,0,0,0,0,0 },
+				{ 0,0,0,0,0,0,0,0 },
+				{ 0,0,0,0,0,0,0,0 },
+				{ 0,0,0,1,2,0,0,0 },
+				{ 0,0,0,2,1,0,0,0 },
+				{ 0,0,0,0,0,0,0,0 },
+				{ 0,0,0,0,0,0,0,0 },
+				{ 0,0,0,0,0,0,0,0 } };
+	
 	int wins[8][8] = { { 0,0,0,0,0,0,0,0 },
 						{ 0,0,0,0,0,0,0,0 },
 						{ 0,0,0,0,0,0,0,0 },
@@ -40,8 +69,34 @@ public:
 						{ 0,0,0,0,0,0,0,0 },
 						{ 0,0,0,0,0,0,0,0 } };
 
-
 	
+	int bestAIWins[8][8] = { { 0,0,0,0,0,0,0,0 },
+					{ 0,0,0,0,0,0,0,0 },
+					{ 0,0,0,0,0,0,0,0 },
+					{ 0,0,0,0,0,0,0,0 },
+					{0,0,0,0,0,0,0,0 },
+					{ 0,0,0,0,0,0,0,0 },
+					{ 0,0,0,0,0,0,0,0 },
+					{ 0,0,0,0,0,0,0,0 } };
+	
+	int reset1[8][8] = { { 0,0,0,0,0,0,0,0 },
+			{ 0,0,0,0,0,0,0,0 },
+			{ 0,0,0,0,0,0,0,0 },
+			{ 0,0,0,1,2,0,0,0 },
+			{ 0,0,0,2,1,0,0,0 },
+			{ 0,0,0,0,0,0,0,0 },
+			{ 0,0,0,0,0,0,0,0 },
+			{ 0,0,0,0,0,0,0,0 } };
+
+	std::chrono::steady_clock::time_point start1;
+	std::chrono::steady_clock::time_point end1;
+	std::chrono::steady_clock::time_point clock;
+	std::vector<int> avaliableTiles{};
+	std::vector<int> finalMoves{};
+	std::vector<int> playerTiles{};
+	std::vector<int> robotTiles{};
+	std::vector<int> init{};
+	std::vector<int> init2{};
 
 	void displayBoard() {
 		cout << '\n';
@@ -61,10 +116,10 @@ public:
 					cout << " |";
 				}
 				else if (tiles[i][j] == 1) {
-					cout << "O|";
+					cout <<RED<< "O"<<RESET<<"|";
 				}
 				else if (tiles[i][j] == 2) {
-					cout << "X|";
+					cout <<BLUE<< "X" << RESET << "|";
 				}
 
 
@@ -109,35 +164,131 @@ public:
 		tiles[number][second] = 0;
 	}
 
-	bool winCondition(bool player) {
-		bool gameOver = true;
-		bool tilesLeft;
+	void playablePlayerTiles() {
+		playerTiles.clear();
+		
+		
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				if (tiles[i][j] == 0) {
-					if (player = true) {
-						validMove(i, j);
-						playPlayerTile(i, j);
-						tilesLeft = validPlayerMoves(i, j, player, false);
-						undoTile(i, j);
-						if (tilesLeft == 1) {
-							gameOver = false;
-						}
+					if (tiles[i - 1][j] == 2 || tiles[i + 1][j] == 2 || tiles[i][j - 1] == 2 || tiles[i][j + 1] == 2 || tiles[i + 1][j + 1] == 2 || tiles[i + 1][j - 1] == 2 || tiles[i - 1][j + 1] == 2 || tiles[i - 1][j - 1] == 2) {
+												
+						playerTiles.push_back((8 * i) + j);
+						//cout <<f (8 * i) + j << " " << i << ":" << j<< " " << '\n';
+							
 					}
-					else {
-						validMove(i, j);
-						playRobotTile(i, j);
-						tilesLeft = validPlayerMoves(i, j, player, false);
-						undoTile(i, j);
-						if (tilesLeft == 1) {
-							gameOver = false;
-						}
-					}
-
 				}
+
 			}
 		}
-		return gameOver;
+		
+
+		
+	}	
+	
+	void playableRobotTiles() {
+		robotTiles.clear();
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				if (tiles[i][j] == 0) {
+					if (tiles[i - 1][j] == 1 || tiles[i + 1][j] == 1 || tiles[i][j - 1] == 1 || tiles[i][j + 1] == 1 || tiles[i + 1][j + 1] == 1 || tiles[i + 1][j - 1] == 1 || tiles[i - 1][j + 1] == 1 || tiles[i - 1][j - 1] == 1) {
+						robotTiles.push_back((8 * i) + j);
+					}
+				}
+
+			}
+		}
+		
+
+		
+	}
+
+	void playableInitialTiles() {
+		init.clear();
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				if (tiles[i][j] == 0) {
+					if (tiles[i - 1][j] == 1 || tiles[i + 1][j] == 1 || tiles[i][j - 1] == 1 || tiles[i][j + 1] == 1 || tiles[i + 1][j + 1] == 1 || tiles[i + 1][j - 1] == 1 || tiles[i - 1][j + 1] == 1 || tiles[i - 1][j - 1] == 1) {
+						init.push_back((8 * i) + j);
+						
+					}
+				}
+
+			}
+		}
+
+
+
+	}
+	
+	void playableInitialTiles2() {
+		init2.clear();
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				if (tiles[i][j] == 0) {
+					if (tiles[i - 1][j] == 2 || tiles[i + 1][j] == 2 || tiles[i][j - 1] == 2 || tiles[i][j + 1] == 2 || tiles[i + 1][j + 1] == 2 || tiles[i + 1][j - 1] == 2 || tiles[i - 1][j + 1] == 2 || tiles[i - 1][j - 1] == 2) {
+
+						init2.push_back((8 * i) + j);
+						//cout << (8 * i) + j << " " << i << ":" << j<< " " << '\n';
+
+					}
+				}
+
+			}
+		}
+
+	}
+
+	bool winCondition1() {
+
+		
+		int first;
+		int second;
+		playablePlayerTiles();
+
+		for (int i = 0; i < playerTiles.size(); i++) {
+			first = floor(playerTiles[i] / 8);
+			second = playerTiles[i] % 8;
+			
+			//validMove(first, second);
+			winCon++;
+			playPlayerTile(first, second);
+			if (validPlayerMoves(first, second, true,false) == true) {
+				tiles[first][second] = 0;
+				
+				return true;
+			}
+			tiles[first][second] = 0;
+		}
+		
+		return false;
+		
+	}
+	
+	bool winCondition2() {
+
+		int first;
+		int second;
+		playableRobotTiles();
+		for (int i = 0; i < robotTiles.size(); i++) {
+			first = floor(robotTiles[i] / 8);
+			second = robotTiles[i] % 8;
+			//validMove(first, second);
+			winCon++;
+			playRobotTile(first, second);
+			if (validPlayerMoves(first, second, false,false) == true) {
+				tiles[first][second] = 0;
+			
+				return true;
+			}
+			
+			tiles[first][second] = 0;
+
+		}
+		
+		return false;
+		
+
 	}
 
 	int calculateWinner() {
@@ -161,8 +312,8 @@ public:
 		}
 	}
 
-	string winner() {
-		string winner;
+	int winner() {
+		int winner;
 		int robot = 0;
 		int player = 0;
 		for (int i = 0; i < 8; i++) {
@@ -176,163 +327,480 @@ public:
 			}
 		}
 		if (robot > player) {
-			return winner = "Robot";
+			return winner = 2;
 		}
 		else {
-			return winner = "Player";
+			return winner = 1;
 		}
 	}
-
-	int getMax() {
-		int max = 0;
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				if (tiles[i][j] > max) {
-					max = tiles[i][j];
-				}
 	
+	
+	
+	int winCon;
+	int whileCounter = 0;
+	int thisCounter = 0;
 
-			}
-		}
-		return max;
-	}
-
-
-
-	void MCTS(int playouts) {
+	bool MCTS(int playouts) {
 		bool gameOverPlayer;
-		bool gameOverRobot;	
+		bool gameOverRobot;
 		int randomNumber1;
 		int randomNumber2;
 		bool spaceNotTaken;
 		bool validInput;
 		bool validTile;
 		bool validInitial;
+		bool finalTilePlayed = false;
+		int value;
+		int index;
+		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
-				validInitial = true;
-				cout << i<<":" << j<<'\n';
-				validTile = false;
-				
-				validMove(i, j);
-				cout << '\n';
+				reset[i][j] = tiles[i][j];
+			}
+		}
+		int first;
+		int second;
+		//For Every Tile
 
-				if (tiles[i][j]!=0) {
-					validInitial = false;
-					cout << "TILE I J != 0";
+		playableInitialTiles();
+		for (int x = 0; x <init.size(); x++) {
+
+			for (int i = 0; i < 8; i++) {
+				for (int j = 0; j < 8; j++) {
+					tiles[i][j] = reset[i][j];
 				}
-				playRobotTile(i, j);
-				if (validPlayerMoves(i, j, false, false) == 0) {
-					undoTile(i, j);
-					validInitial = false;
-					cout << "NOT GOOD TILE"<<'\n';
+			}
 
+			first = floor(init[x] / 8);
+			second = init[x] % 8;
+
+			playRobotTile(first, second);
+
+			//validMove(first, second);
+			if (validPlayerMoves(first, second, false, true) == true) {
+				for (int i = 0; i < 8; i++) {
+					for (int j = 0; j < 8; j++) {
+						reset1[i][j] = tiles[i][j];
+					}
 				}
-				undoTile(i, j);
+				// Play the initial tile
+				finalTilePlayed = true; 
 				
-				if(validInitial == true){
-					// Play the initial tile
-					playRobotTile(i, j);
-					validPlayerMoves(i, j, false, true);
-					displayBoard();
+				//cout << "START OF PLAYOUTS**************************************" << '\n;';
+				for (int k = 0; k < playouts; k++) {
+					
+					
+					for (int i = 0; i < 8; i++) {
+						for (int j = 0; j < 8; j++) {
+							tiles[i][j] = reset1[i][j];
+						}
+					}
+					
+					//cout << "INITIAL TILE BEING PLAYED";
+					//displayBoard();
+					gameOverPlayer = false;
+					gameOverRobot = false;
 
+					
+					while (gameOverPlayer == false || gameOverRobot == false) {
+						whileCounter++;
 
-					for (int k = 0; k < playouts; k++) {
+						//Player Goes
+						//cout << "Player MOVE" << '\n';
 						gameOverPlayer = false;
+						if (winCondition1() == false) {
+							gameOverPlayer = true;
+							if (gameOverRobot == true) {
+								break;
+							}
+							//cout << "Player CANT PLAY A TILE"<<'\n';
+						}
+						else {
+							//cout << "NUM OF PLAYER TILES: " << playerTiles.size() << '\n';
+							validInput = false;
+
+							while (validInput == false) {
+
+								//Create Random Numbers
+								//calculatePlayablePlayerTiles();
+								index = rand() % playerTiles.size(); // pick a random index
+								value = playerTiles[index]; // a random value taken from that list
+								randomNumber1 = floor(value / 8);
+								randomNumber2 = value % 8;
+								//randomNumber1 = rand() % 8;
+								//randomNumber2 = rand() % 8;
+								
+								playPlayerTile(randomNumber1, randomNumber2);
+								thisCounter++;
+								//validMove(randomNumber1, randomNumber2);
+
+
+								if (validPlayerMoves(randomNumber1, randomNumber2, true, true) == false) {
+									undoTile(randomNumber1, randomNumber2);
+									//cout << "INVALID MOVE, TRY AGAIN" << '\n';
+								}
+								else {									
+									//displayBoard();
+									validInput = true;
+								}															
+							}
+						}
+
+						//Robot Goes
+						//cout << "ROBOT MOVE" << '\n';
 						gameOverRobot = false;
-							
-						while (gameOverPlayer == false || gameOverRobot == false) {
-							//Player Goes
-							cout << "Player MOVE" << '\n';
-							gameOverPlayer = false;
-							if (winCondition(true) == true) {
-								gameOverPlayer = true;
-							}
-							else {									
-								validInput = false;
-								while (validInput == false) {
-									//Create Random Numbers
-									randomNumber1 = rand() % 8;
-									randomNumber2 = rand() % 8;
-									if (playPlayerTile(randomNumber1, randomNumber2) == true) {
+						if (winCondition2() == false) {
+							gameOverRobot = true;
 
-										validMove(randomNumber1, randomNumber2);
-										validTile = validPlayerMoves(randomNumber1, randomNumber2, true, false);
-										if (validTile == false) {
-											undoTile(randomNumber1, randomNumber2);
-											//cout << "INVALID MOVE, TRY AGAIN" << '\n';
-										}
-										else {
-											validPlayerMoves(randomNumber1, randomNumber2, true, true);
-											cout << "pPlay";
-											displayBoard();
-											validInput = true;
-										}
-
-									}
+							//cout << "ROBOT CANT PLAY A TILE";
+						}
+						else {
+							//cout << "NUM OF ROBOT TILES: " << robotTiles.size()<<'\n';
+							validInput = false;
+							while (validInput == false) {
+								//Create Random Numbers
+								//calculatePlayableRobotTiles();
+								index = rand() % robotTiles.size(); // pick a random index
+								value = robotTiles[index]; // a random value taken from that list
+								randomNumber1 = floor(value / 8);
+								randomNumber2 = value % 8;
+								//randomNumber1 = rand() % 8;
+								//randomNumber2 = rand() % 8;
+															
+								playRobotTile(randomNumber1, randomNumber2);
+								//validMove(randomNumber1, randomNumber2);
+								thisCounter++;
+								if (validPlayerMoves(randomNumber1, randomNumber2, false,true) == false) {
+									undoTile(randomNumber1, randomNumber2);
+									//cout << "INVALID MOVE, TRY AGAIN" << '\n';
 								}
-							}
-
-							//Robot Goes
-							cout << "ROBOT MOVE"<<'\n';
-							gameOverRobot = false;
-							if (winCondition(false) == true) {
-								gameOverRobot = true;
-								cout<<"ROBOT WIN?:";
-							}
-							else {								
-								validInput = false;
-								while (validInput == false) {
-									//Create Random Numbers
-									randomNumber1 = rand() % 8;
-									randomNumber2 = rand() % 8;
-									if (playRobotTile(randomNumber1, randomNumber2) == true) {
-
-										validMove(randomNumber1, randomNumber2);
-										validTile = validPlayerMoves(randomNumber1, randomNumber2, false, false);
-										if (validTile == false) {
-											undoTile(randomNumber1, randomNumber2);
-											//cout << "INVALID MOVE, TRY AGAIN" << '\n';
-										}
-										else {
-											validPlayerMoves(randomNumber1, randomNumber2, false, true);
-											displayBoard();
-											validInput = true;
-										}
-
-									}
-								}
+								else {									
+									//displayBoard();
+									validInput = true;
+								}																
 							}
 						}
-						cout << "Game ended";
-						cout << calculateWinner() << " " << winner();
-						if (winner() == "robot") {
-							wins[i][j] += 1;
-						}
-						else if (winner() == "player")
-						{
-							wins[i][j] -= 1;
-						}
-						//print wins
-						//for (int i = 0; i < 8; i++) {
-						//	cout << '\n';
-						//	for (int j = 0; j < 8; j++) {
-						//		cout << wins[i][j];
-						//	}
-						//}
-
 
 					}
 
+					//cout << "PLAYOUT ENDED"<<'\n';
+					//cout << '\n';
+					//cout << calculateWinner() << " " << winner()<<i<<":"<<j<<'\n';
 
+					//displayBoard();
+
+					if (winner() == 2) {
+						wins[first][second] += 5;
+
+					}
+					else if (winner() == 1)
+					{
+						wins[first][second] -= 3;
+					}
 					
 				}
+				
+			}
+			else {
+				undoTile(first, second);
+			}
+
+		}
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				tiles[i][j] = reset[i][j];
+				//cout << wins[i][j]<<" ";
 			}
 		}
+		if (finalTilePlayed == true) {
+			int max = -99999;
+			int row;
+			int col;
+			for (int i = 0; i < 8; i++) {
+				cout << '\n';
+				for (int j = 0; j < 8; j++) {
+					cout << wins[i][j] << " ";
+					
+					if (wins[i][j] > max) {
+						//validMove(i, j);
+						if (playRobotTile(i, j) == true) {
+							if ((validPlayerMoves(i, j, false, false) == true)) {
+								max = wins[i][j];
+								row = i;
+								col = j;
+							}
+							undoTile(i, j);
+
+						}
+
+					}
+					
+					wins[i][j] = 0;
+
+				}
+			}
+
+			tiles[row][col] = 2;
+			cout << "MCTS PLAYED:" << row << " " << col << '\n';
+			//validMove(row, col);
+			if (validPlayerMoves(row, col, false, true) == false) {
+				cout << "ERRORERRORERRORERRORERRORERRORERRORERRORERRORERROR" << '\n';
+				cout << max;
+			}
+
+			cout << "MAX: " << max;
+		}
+
+		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+		std::cout << "ENTIRE MCTS TIME= " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "ms" << std::endl;
+		cout << "WHILE: " << whileCounter << '\n';
+		cout << "VALIDPLAYERMOVES CALLS: " << thisCounter << '\n';
+		cout << "WIN CON TOTAL CALLS: " << winCon << '\n';
+		winCon = 0;
+		whileCounter = 0;
+		thisCounter = 0;
+
+
+
+		return finalTilePlayed;
 	}
+	
+	bool bestAI(int playouts) {
+		bool gameOverPlayer;
+		bool gameOverRobot;
+		int randomNumber1;
+		int randomNumber2;
+		bool spaceNotTaken;
+		bool validInput;
+		bool validTile;
+		bool validInitial;
+		bool finalTilePlayed = false;
+		int value;
+		int index;
+		std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				reset[i][j] = tiles[i][j];
+			}
+		}
+		int first;
+		int second;
+		//For Every Tile
+
+		playableInitialTiles2();
+		for (int x = 0; x < init2.size(); x++) {
+			
+			for (int i = 0; i < 8; i++) {
+				for (int j = 0; j < 8; j++) {
+					tiles[i][j] = reset[i][j];
+				}
+			}
+
+			first = floor(init2[x] / 8);
+			second = init2[x] % 8;
+
+			playPlayerTile(first, second);
+
+			//validMove(first, second);
+			if (validPlayerMoves(first, second, true, true) == true) {
+				
+				for (int i = 0; i < 8; i++) {
+					for (int j = 0; j < 8; j++) {
+						reset1[i][j] = tiles[i][j];
+					}
+				}
+				// Play the initial tile
+				finalTilePlayed = true;
+
+				//cout << "START OF PLAYOUTS**************************************" << '\n;';
+				for (int k = 0; k < playouts; k++) {
+					
+
+					for (int i = 0; i < 8; i++) {
+						for (int j = 0; j < 8; j++) {
+							tiles[i][j] = reset1[i][j];
+						}
+					}
+
+					//cout << "INITIAL TILE BEING PLAYED";
+					//displayBoard();
+					gameOverPlayer = false;
+					gameOverRobot = false;
 
 
-	void changeTiles(int number, int second, string direction, int tileCounter, bool player) {
+					while (gameOverPlayer == false || gameOverRobot == false) {
+						whileCounter++;
+
+
+
+						//Robot Goes
+						//cout << "ROBOT MOVE" << '\n';
+						gameOverRobot = false;
+						if (winCondition2() == false) {
+							gameOverRobot = true;
+							if (gameOverPlayer == true) {
+								break;
+							}
+
+							//cout << "ROBOT CANT PLAY A TILE";
+						}
+						else {
+							//cout << "NUM OF ROBOT TILES: " << robotTiles.size()<<'\n';
+							validInput = false;
+							while (validInput == false) {
+								//Create Random Numbers
+								//calculatePlayableRobotTiles();
+								index = rand() % robotTiles.size(); // pick a random index
+								value = robotTiles[index]; // a random value taken from that list
+								randomNumber1 = floor(value / 8);
+								randomNumber2 = value % 8;
+								//randomNumber1 = rand() % 8;
+								//randomNumber2 = rand() % 8;
+
+								playRobotTile(randomNumber1, randomNumber2);
+								//validMove(randomNumber1, randomNumber2);
+								thisCounter++;
+								if (validPlayerMoves(randomNumber1, randomNumber2, false, true) == false) {
+									undoTile(randomNumber1, randomNumber2);
+									//cout << "INVALID MOVE, TRY AGAIN" << '\n';
+								}
+								else {
+									//displayBoard();
+									validInput = true;
+								}
+							}
+						}
+						//Player Goes
+						//cout << "Player MOVE" << '\n';
+						gameOverPlayer = false;
+						if (winCondition1() == false) {
+							gameOverPlayer = true;
+							if (gameOverRobot == true) {
+								break;
+							}
+							//cout << "Player CANT PLAY A TILE"<<'\n';
+						}
+						else {
+							//cout << "NUM OF PLAYER TILES: " << playerTiles.size() << '\n';
+							validInput = false;
+
+							while (validInput == false) {
+
+								//Create Random Numbers
+								//calculatePlayablePlayerTiles();
+								index = rand() % playerTiles.size(); // pick a random index
+								value = playerTiles[index]; // a random value taken from that list
+								randomNumber1 = floor(value / 8);
+								randomNumber2 = value % 8;
+								//randomNumber1 = rand() % 8;
+								//randomNumber2 = rand() % 8;
+
+								playPlayerTile(randomNumber1, randomNumber2);
+								thisCounter++;
+								//validMove(randomNumber1, randomNumber2);
+
+
+								if (validPlayerMoves(randomNumber1, randomNumber2, true, true) == false) {
+									undoTile(randomNumber1, randomNumber2);
+									//cout << "INVALID MOVE, TRY AGAIN" << '\n';
+								}
+								else {
+									//displayBoard();
+									validInput = true;
+								}
+							}
+						}
+
+					}
+
+					//cout << "PLAYOUT ENDED"<<'\n';
+					//cout << '\n';
+					//cout << calculateWinner() << " " << winner()<<i<<":"<<j<<'\n';
+
+					//displayBoard();
+
+					if (winner() == 1) {
+						bestAIWins[first][second] += 5;
+
+					}
+					else if (winner() == 2)
+					{
+						bestAIWins[first][second] -= 3;
+					}
+
+				}
+
+			}
+			else {
+				undoTile(first, second);
+			}
+
+		}
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				tiles[i][j] = reset[i][j];
+				//cout << wins[i][j]<<" ";
+			}
+		}
+		if (finalTilePlayed == true) {
+			int max = -99999;
+			int row;
+			int col;
+			for (int i = 0; i < 8; i++) {
+				cout << '\n';
+				for (int j = 0; j < 8; j++) {
+					cout << bestAIWins[i][j] << " ";
+
+					if (bestAIWins[i][j] > max) {
+						//validMove(i, j);
+						if (playPlayerTile(i, j) == true) {
+							if ((validPlayerMoves(i, j, true, false) == true)) {
+								max = bestAIWins[i][j];
+								row = i;
+								col = j;
+							}
+							undoTile(i, j);
+
+						}
+
+					}
+
+					bestAIWins[i][j] = 0;
+
+				}
+			}
+
+			tiles[row][col] = 1;
+			cout << "BEST AI PLAYED:" << row << " " << col << '\n';
+			//validMove(row, col);
+			if (validPlayerMoves(row, col, true, true) == false) {
+				cout << "ERRORERRORERRORERRORERRORERRORERRORERRORERRORERROR" << '\n';
+				cout << max;
+			}
+
+			cout << "MAX: " << max;
+		}
+
+		std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+		std::cout << "ENTIRE MCTS TIME= " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "ms" << std::endl;
+		cout << "WHILE: " << whileCounter << '\n';
+		cout << "VALIDPLAYERMOVES CALLS: " << thisCounter << '\n';
+		cout << "WIN CON TOTAL CALLS: " << winCon << '\n';
+		winCon = 0;
+		whileCounter = 0;
+		thisCounter = 0;
+
+
+
+		return finalTilePlayed;
+	}
+	
+
+
+
+	void changeTiles(int number, int second, int direction, int tileCounter, bool player) {
 		int i;
 		if (player == true) {
 			i = 1;
@@ -340,407 +808,820 @@ public:
 		else {
 			i = 2;
 		}
-		cout << "WHOS TURN:" << i << '\n';
-		if (direction == "left") {
+		if (direction == 0) {
 			for (int x = 0; x < tileCounter; x++) {
 				tiles[number][second - 1 - x] = i;
 			}
 		}
-		else if (direction == "right") {
+		else if (direction == 1) {
 			for (int x = 0; x < tileCounter; x++) {
 				tiles[number][second + 1 + x] = i;
 			}
 
 		}
-		else if (direction == "up") {
+		else if (direction == 2) {
 			for (int x = 0; x < tileCounter; x++) {
 				tiles[number - 1 - x][second] = i;
 			}
 
 		}
-		else if (direction == "down") {
+		else if (direction == 3) {
 			for (int x = 0; x < tileCounter; x++) {
 				tiles[number + 1 + x][second] = i;
 			}
 
 		}
-		else if (direction == "upleft") {
+		else if (direction == 4) {
 			for (int x = 0; x < tileCounter; x++) {
 				tiles[number - 1 - x][second - 1 - x] = i;
 			}
 		}
-		else if (direction == "upright") {
+		else if (direction ==5) {
 			for (int x = 0; x < tileCounter; x++) {
 				tiles[number - 1 - x][second + 1 + x] = i;
 			}
 
 		}
-		else if (direction == "downleft") {
+		else if (direction == 6) {
 			for (int x = 0; x < tileCounter; x++) {
 				tiles[number + 1 + x][second - 1 - x] = i;
 			}
 
 		}
-		else if (direction == "downright") {
+		else if (direction ==7) {
 			for (int x = 0; x < tileCounter; x++) {
 				tiles[number + 1 + x][second + 1 + x] = i;
 			}
 		}
 	}
 
-	void validMove(int number, int second) {
-
-		string moves[] = { "up","down","left","right","upleft","upright","downleft","downright" };
-		for (int i = 0; i < 8; i++) {
-			finalMoves[i] = "";
-		}
-		if (second == 0) {
-			if (number == 0) {
-
-				finalMoves[0] = moves[1];
-				finalMoves[1] = moves[3];
-				finalMoves[2] = moves[7];
-
-				
-			}
-			else if (number == 7) {
-				finalMoves[0] = moves[0];
-				finalMoves[1] = moves[3];
-				finalMoves[2] = moves[5];
-			}
-			else {
-				finalMoves[0] = moves[0];
-				finalMoves[1] = moves[1];
-				finalMoves[2] = moves[3];
-				finalMoves[3] = moves[5];
-				finalMoves[4] = moves[7];
-			}
-
-		}
-		
-		else if (second == 7) {
-			
-			if (number == 0) {
-
-				finalMoves[0] = moves[1];
-				finalMoves[1] = moves[2];
-				finalMoves[2] = moves[6];
-			}
-			else if (number == 7) {
-
-				finalMoves[0] = moves[0];
-				finalMoves[1] = moves[2];
-				finalMoves[2] = moves[4];
-			}
-			else {
-				finalMoves[0] = moves[0];
-				finalMoves[1] = moves[1];
-				finalMoves[2] = moves[2];
-				finalMoves[3] = moves[4];
-				finalMoves[4] = moves[6];
-			}
-
-		}
-		else if (number == 0 && second >= 1) {
-			finalMoves[0] = moves[1];
-			finalMoves[1] = moves[2];
-			finalMoves[2] = moves[3];
-			finalMoves[3] = moves[6];
-			finalMoves[4] = moves[7];
-
-
-		}
-		else if (number == 7 && second >=1) {
-			finalMoves[0] = moves[0];
-			finalMoves[1] = moves[2];
-			finalMoves[2] = moves[3];
-			finalMoves[3] = moves[4];
-			finalMoves[4] = moves[5];
-		}
-		else {
-			finalMoves[0] = moves[0];
-			finalMoves[1] = moves[1];
-			finalMoves[2] = moves[2];
-			finalMoves[3] = moves[3];
-			finalMoves[4] = moves[4];
-			finalMoves[5] = moves[5];
-			finalMoves[6] = moves[6];
-			finalMoves[7] = moves[7];
-			
-			
-
-		}
-
-	}
 
 	bool validPlayerMoves(int number, int second, bool player, bool change) {
-
 		bool minValidMove = false;
 		int tileCounter;
 		int i;
 		int j;
 		int p;
-		
+		int opposite;
+		bool tileExist = true;
 		if (player == true) {
 			p = 1;
-		}
-		else if(player == false){
-			p = 2;
-		}
-		for (int k = 0; k < 8; k++) {
+			opposite = 2;
+		
+			
 
-			if (finalMoves[k] != "") {
-				bool tileExist = true;
+			//LEFT OF TILE
 
-				//LEFT OF TILE
-				if (finalMoves[k] == "left" && tiles[number][second - 1] != 0 && tiles[number][second - 1] != p) {
-					tileCounter = 0;
-					i = second - 1;
+			if (tiles[number][second - 1] == opposite) {
+				tileExist = true;
+				tileCounter = 0;
+				i = second - 1;
 
-					while (i >= 0) {
-						if (tiles[number][second] == tiles[number][i]) {
-							break;
-						}
-						//Tile has nothing on it
-						if (tiles[number][i] == 0) {
-							tileExist = false;
-							break;
-						}
-						i--;
-						tileCounter++;
-
-
+				while (i >= 0) {
+					if (tiles[number][second] == tiles[number][i]) {
+						break;
 					}
-					//cout << "I: " << i;
-
-					if ((i != -1 || tiles[number][i + 1] == p) && tileCounter != 0 && tileExist != false) {
-						minValidMove = true;
-						if (change == true) {
-							changeTiles(number, second, "left", tileCounter, player);
-						}
-
+					//Tile has nothing on it
+					if (tiles[number][i] == 0) {
+						tileExist = false;
+						break;
 					}
+					i--;
+					tileCounter++;
 
-					//cout << "LEFT" << tileCounter << '\n';
-				}
-				//RIGHT OF TILE
-				else if (finalMoves[k] == "right" && tiles[number][second + 1] != 0 && tiles[number][second + 1] != p) {
-					tileCounter = 0;
-					cout <<"TILE:" <<tiles[number][second + 1] <<  '\n';
-					i = second + 1;
-					while (i <= 7) {
-						if (tiles[number][second] == tiles[number][i]) {
-							break;
-						}
-						//Tile has nothing on it
-						if (tiles[number][i] == 0) {
-							tileExist = false;
-							break;
-						}
-						i++;
-						tileCounter++;
-
-
-					}
-					if ((i != 8 || tiles[number][i - 1] == p) && tileCounter != 0 && tileExist != false) {
-						minValidMove = true;
-						if (change == true) {
-							changeTiles(number, second, "right", tileCounter, player);
-						}
-					}
-					
-					//cout << "RIGHT" << tileCounter << '\n';
 
 				}
-				//UP OF TILE
-				else if (finalMoves[k] == "up" && tiles[number - 1][second] != 0 && tiles[number - 1][second] != p) {
-					tileCounter = 0;
-					i = number - 1;
+				//cout << "I: " << i;
 
-					while (i >= 0) {
-						//cout << tiles[number][second] << " " << tiles[i][second];
-						if (tiles[number][second] == tiles[i][second]) {
-
-							break;
-						}
-						//Tile has nothing on it
-						if (tiles[i][second] == 0) {
-							tileExist = false;
-							break;
-						}
-						i--;
-						tileCounter++;
-
-
+				if ((i != -1 || tiles[number][i + 1] == p) && tileCounter != 0 && tileExist != false) {
+					minValidMove = true;
+					if (change == true) {
+						changeTiles(number, second, 0, tileCounter, player);
 					}
-
-					if ((i != -1 || tiles[i + 1][second] == p) && tileCounter != 0 && tileExist != false) {
-						minValidMove = true;
-						cout << "UP";
-						if (change == true) {
-							changeTiles(number, second, "up", tileCounter, player);
-						}
-					}
-					//cout << "UP" << tileCounter << '\n';
 
 				}
-				//DOWN OF TILE
-				else if (finalMoves[k] == "up" && tiles[number + 1][second] != 0 && tiles[number + 1][second] != p) {
 
-					
-					tileCounter = 0;
-					i = number + 1;
-					while (i <= 7) {
-
-						if (tiles[number][second] == tiles[i][second]) {
-							break;
-						}
-						//Tile has nothing on it
-						if (tiles[i][second] == 0) {
-							tileExist = false;
-							break;
-						}
-						i++;
-						tileCounter++;
-
-
+				//cout << "LEFT" << tileCounter << '\n';
+			}
+			//RIGHT OF TILE
+			if (tiles[number][second + 1] == opposite) {
+				tileExist = true;
+				tileCounter = 0;
+				i = second + 1;
+				while (i <= 7) {
+					if (tiles[number][second] == tiles[number][i]) {
+						break;
 					}
-
-					if ((i != 8 || tiles[i - 1][second] == p) && tileCounter != 0 && tileExist != false) {
-						minValidMove = true;
-						cout << "Down";
-						if (change == true) {
-							changeTiles(number, second, "down", tileCounter, player);
-						}
+					//Tile has nothing on it
+					if (tiles[number][i] == 0) {
+						tileExist = false;
+						break;
 					}
-					//cout << "DOWN" << tileCounter << '\n';
+					i++;
+					tileCounter++;
 
 				}
-				//UPLEFT of Tile
-				else if (finalMoves[k] == "upleft" && tiles[number - 1][second - 1] != 0 && tiles[number - 1][second - 1] != p) {
-					tileCounter = 0;
-					i = number - 1;
-					j = second - 1;
-					while (i >= 0 || j >= 0) {
-						// Clean break
-						if (tiles[number][second] == tiles[i][j]) {
-							break;
-						}
-						//Tile has nothing on it
-						if (tiles[i][j] == 0) {
-							tileExist = false;
-							break;
-						}
-						i--;
-						j--;
-						tileCounter++;
+				if ((i != 8 || tiles[number][i - 1] == p) && tileCounter != 0 && tileExist != false) {
+					minValidMove = true;
+					if (change == true) {
+						changeTiles(number, second, 1, tileCounter, player);
 					}
+				}
 
-					if ((i != -1 || tiles[i + 1][second] == p) && (j != -1 || tiles[number][j + 1] == p) && tileCounter != 0 && tileExist != false) {
-						minValidMove = true;
-						if (change == true) {
-							changeTiles(number, second, "upleft", tileCounter, player);
-						}
+				//cout << "RIGHT" << tileCounter << '\n';
+
+			}
+			//UP OF TILE
+			if (tiles[number - 1][second] == opposite) {
+				tileExist = true;
+				tileCounter = 0;
+				i = number - 1;
+
+				while (i >= 0) {
+					//cout << tiles[number][second] << " " << tiles[i][second];
+					if (tiles[number][second] == tiles[i][second]) {
+
+						break;
 					}
+					//Tile has nothing on it
+					if (tiles[i][second] == 0) {
+						tileExist = false;
+						break;
+					}
+					i--;
+					tileCounter++;
 
-					//cout << "UPLEFT" << tileCounter << '\n';
 
 				}
-				//UPRIGHT of tile
-				else if (finalMoves[k] == "upright" && tiles[number - 1][second + 1] != 0 && tiles[number - 1][second + 1] != p) {
-					tileCounter = 0;
-					i = number - 1;
-					j = second + 1;
-					while (i >= 0 || j <= 7) {
-						//cout << tiles[number][second] << " " << tiles[i][j] << '\n';
-						if (tiles[number][second] == tiles[i][j]) {
-							break;
-						}
-						//Tile has nothing on it
-						if (tiles[i][j] == 0) {
-							tileExist = false;
-							break;
-						}
-						i--;
-						j++;
-						tileCounter++;
-					}
 
-					if ((i != -1 || tiles[i + 1][second] == p) && (j != 8 || tiles[number][j - 1] == p) && tileCounter != 0 && tileExist != false) {
-						minValidMove = true;
-						if (change == true) {
-							changeTiles(number, second, "upright", tileCounter, player);
-						}
+				if ((i != -1 || tiles[i + 1][second] == p) && tileCounter != 0 && tileExist != false) {
+					minValidMove = true;
+					if (change == true) {
+						changeTiles(number, second,2, tileCounter, player);
 					}
-					//cout << "UPRIGHT" << tileCounter << '\n';
+				}
+				//cout << "UP" << tileCounter << '\n';
+
+			}
+			//DOWN OF TILE
+			if (tiles[number + 1][second] == opposite) {
+				tileExist = true;
+				tileCounter = 0;
+				i = number + 1;
+				while (i <= 7) {
+
+					if (tiles[number][second] == tiles[i][second]) {
+						break;
+					}
+					//Tile has nothing on it
+					if (tiles[i][second] == 0) {
+						tileExist = false;
+						break;
+					}
+					i++;
+					tileCounter++;
+
 
 				}
-				//DOWNLEFT of tile
-				else if (finalMoves[k] == "downleft" && tiles[number + 1][second - 1] != 0 && tiles[number + 1][second - 1] != p) {
-					tileCounter = 0;
-					i = number + 1;
-					j = second - 1;
-					while (i <= 7 || j >= 0) {
-						if (tiles[number][second] == tiles[i][j]) {
-							break;
-						}
-						//Tile has nothing on it
-						if (tiles[i][j] == 0) {
-							tileExist = false;
-							break;
-						}
-						i++;
-						j--;
-						tileCounter++;
-					}
 
-					if ((i != 8 || tiles[i - 1][second] == p) && (j != -1 || tiles[number][j + 1] == p) && tileCounter != 0 && tileExist != false) {
-						minValidMove = true;
-						if (change == true) {
-							changeTiles(number, second, "downleft", tileCounter, player);
-						}
+				if ((i != 8 || tiles[i - 1][second] == p) && tileCounter != 0 && tileExist != false) {
+					minValidMove = true;
+					if (change == true) {
+						changeTiles(number, second,3, tileCounter, player);
 					}
-					//cout << "DOWNLEFT" << tileCounter << '\n';
-
 				}
-				//DOWNRIGHT of tile
-				else if (finalMoves[k] == "downright" && tiles[number + 1][second + 1] != 0 && tiles[number + 1][second + 1] != p) {
-					tileCounter = 0;
-					i = number + 1;
-					j = second + 1;
-					while (i <= 7 || j <= 7) {
-						if (tiles[number][second] == tiles[i][j]) {
-							break;
-						}
-						//Tile has nothing on it
-						if (tiles[i][j] == 0) {
-							tileExist = false;
-							break;
-						}
-						i++;
-						j++;
-						tileCounter++;
+				//cout << "DOWN" << tileCounter << '\n';
+
+			}
+			//UPLEFT of Tile
+			if (tiles[number - 1][second - 1] == opposite) {
+				tileExist = true;
+				tileCounter = 0;
+				i = number - 1;
+				j = second - 1;
+				while (i >= 0 && j >= 0) {
+					// Clean break
+					if (tiles[number][second] == tiles[i][j]) {
+						break;
 					}
-
-					if ((i != 8 || tiles[i - 1][second] == p) && (j != 8 || tiles[number][j - 1] == p) && tileCounter != 0 && tileExist != false) {
-						minValidMove = true;
-						cout<<"DOWNRIGHT";
-
-						if (change == true) {
-							changeTiles(number, second, "downright", tileCounter, player);
-						}
+					//Tile has nothing on it
+					if (tiles[i][j] == 0) {
+						tileExist = false;
+						break;
 					}
-					//cout << "DOWNRIGHT" << tileCounter << '\n';
-
+					i--;
+					j--;
+					tileCounter++;
 				}
+
+				if ((i != -1 || tiles[i + 1][j + 1] == p) && (j != -1 || tiles[i + 1][j + 1] == p) && tileCounter != 0 && tileExist != false) {
+					minValidMove = true;
+					if (change == true) {
+						changeTiles(number, second, 4, tileCounter, player);
+					}
+				}
+
+				//cout << "UPLEFT" << tileCounter << '\n';
+
+			}
+			//UPRIGHT of tile
+			if (tiles[number - 1][second + 1] == opposite) {
+				tileExist = true;
+				tileCounter = 0;
+				i = number - 1;
+				j = second + 1;
+				while (i >= 0 && j <= 7) {
+					//cout << tiles[number][second] << " " << tiles[i][j] << '\n';
+					if (tiles[number][second] == tiles[i][j]) {
+						break;
+					}
+					if (tiles[i][j] == 0) {
+						tileExist = false;
+						break;
+					}
+					//Tile has nothing on it
+
+					i--;
+					j++;
+					tileCounter++;
+				}
+
+
+				if ((i != -1 || tiles[i + 1][j - 1] == p) && (j != 8 || tiles[i + 1][j - 1] == p) && tileCounter != 0 && tileExist != false) {
+					minValidMove = true;
+					if (change == true) {
+						changeTiles(number, second, 5, tileCounter, player);
+					}
+				}
+				//cout << "UPRIGHT" << tileCounter << '\n';
+
+			}
+			//DOWNLEFT of tile
+			if (tiles[number + 1][second - 1] == opposite) {
+				tileExist = true;
+				tileCounter = 0;
+				i = number + 1;
+				j = second - 1;
+				while (i <= 7 && j >= 0) {
+					if (tiles[number][second] == tiles[i][j]) {
+						break;
+					}
+					if (tiles[i][j] == 0) {
+						tileExist = false;
+						break;
+					}
+					//Tile has nothing on it
+
+					i++;
+					j--;
+					tileCounter++;
+				}
+
+				if ((i != 8 || tiles[i - 1][j + 1] == p) && (j != -1 || tiles[i - 1][j + 1] == p) && tileCounter != 0 && tileExist != false) {
+					minValidMove = true;
+					if (change == true) {
+						changeTiles(number, second,6, tileCounter, player);
+					}
+				}
+				//cout << "DOWNLEFT" << tileCounter << '\n';
+
+			}
+			//DOWNRIGHT of tile
+			if (tiles[number + 1][second + 1] == opposite) {
+				tileExist = true;
+				tileCounter = 0;
+				i = number + 1;
+				j = second + 1;
+				while (i <= 7 && j <= 7) {
+					if (tiles[number][second] == tiles[i][j]) {
+						break;
+					}
+					if (tiles[i][j] == 0) {
+						tileExist = false;
+						break;
+					}
+					//Tile has nothing on it
+
+					i++;
+					j++;
+					tileCounter++;
+				}
+
+				if ((i != 8 || tiles[i - 1][j - 1] == p) && (j != 8 || tiles[i - 1][j - 1] == p) && tileCounter != 0 && tileExist != false) {
+					minValidMove = true;
+
+					if (change == true) {
+						changeTiles(number, second, 7, tileCounter, player);
+					}
+				}
+				//cout << "DOWNRIGHT" << tileCounter << '\n';
+
 			}
 
+
 		}
+		
+		else if (player == false) {
+			p = 2;
+			opposite = 1;
+		
+			bool tileExist = true;
+
+			//LEFT OF TILE
+
+			if (tiles[number][second - 1] == opposite) {
+				tileExist = true;
+				tileCounter = 0;
+				i = second - 1;
+
+				while (i >= 0) {
+					if (tiles[number][second] == tiles[number][i]) {
+						break;
+					}
+					//Tile has nothing on it
+					if (tiles[number][i] == 0) {
+						tileExist = false;
+						break;
+					}
+					i--;
+					tileCounter++;
+
+
+				}
+				//cout << "I: " << i;
+
+				if ((i != -1 || tiles[number][i + 1] == p) && tileCounter != 0 && tileExist != false) {
+					minValidMove = true;
+					if (change == true) {
+						changeTiles(number, second, 0, tileCounter, player);
+					}
+
+				}
+
+				//cout << "LEFT" << tileCounter << '\n';
+			}
+			//RIGHT OF TILE
+			if (tiles[number][second + 1] == opposite) {
+				tileExist = true;
+				tileCounter = 0;
+				i = second + 1;
+				while (i <= 7) {
+					if (tiles[number][second] == tiles[number][i]) {
+						break;
+					}
+					//Tile has nothing on it
+					if (tiles[number][i] == 0) {
+						tileExist = false;
+						break;
+					}
+					i++;
+					tileCounter++;
+
+				}
+				if ((i != 8 || tiles[number][i - 1] == p) && tileCounter != 0 && tileExist != false) {
+					minValidMove = true;
+					if (change == true) {
+						changeTiles(number, second, 1, tileCounter, player);
+					}
+				}
+
+				//cout << "RIGHT" << tileCounter << '\n';
+
+			}
+			//UP OF TILE
+			if (tiles[number - 1][second] == opposite) {
+				tileExist = true;
+				tileCounter = 0;
+				i = number - 1;
+
+				while (i >= 0) {
+					//cout << tiles[number][second] << " " << tiles[i][second];
+					if (tiles[number][second] == tiles[i][second]) {
+
+						break;
+					}
+					//Tile has nothing on it
+					if (tiles[i][second] == 0) {
+						tileExist = false;
+						break;
+					}
+					i--;
+					tileCounter++;
+
+
+				}
+
+				if ((i != -1 || tiles[i + 1][second] == p) && tileCounter != 0 && tileExist != false) {
+					minValidMove = true;
+					if (change == true) {
+						changeTiles(number, second, 2, tileCounter, player);
+					}
+				}
+				//cout << "UP" << tileCounter << '\n';
+
+			}
+			//DOWN OF TILE
+			if (tiles[number + 1][second] == opposite) {
+				tileExist = true;
+				tileCounter = 0;
+				i = number + 1;
+				while (i <= 7) {
+
+					if (tiles[number][second] == tiles[i][second]) {
+						break;
+					}
+					//Tile has nothing on it
+					if (tiles[i][second] == 0) {
+						tileExist = false;
+						break;
+					}
+					i++;
+					tileCounter++;
+
+
+				}
+
+				if ((i != 8 || tiles[i - 1][second] == p) && tileCounter != 0 && tileExist != false) {
+					minValidMove = true;
+					if (change == true) {
+						changeTiles(number, second, 3, tileCounter, player);
+					}
+				}
+				//cout << "DOWN" << tileCounter << '\n';
+
+			}
+			//UPLEFT of Tile
+			if (tiles[number - 1][second - 1] == opposite) {
+				tileExist = true;
+				tileCounter = 0;
+				i = number - 1;
+				j = second - 1;
+				while (i >= 0 && j >= 0) {
+					// Clean break
+					if (tiles[number][second] == tiles[i][j]) {
+						break;
+					}
+					//Tile has nothing on it
+					if (tiles[i][j] == 0) {
+						tileExist = false;
+						break;
+					}
+					i--;
+					j--;
+					tileCounter++;
+				}
+
+				if ((i != -1 || tiles[i + 1][j + 1] == p) && (j != -1 || tiles[i + 1][j + 1] == p) && tileCounter != 0 && tileExist != false) {
+					minValidMove = true;
+					if (change == true) {
+						changeTiles(number, second, 4, tileCounter, player);
+					}
+				}
+
+				//cout << "UPLEFT" << tileCounter << '\n';
+
+			}
+			//UPRIGHT of tile
+			if (tiles[number - 1][second + 1] == opposite) {
+				tileExist = true;
+				tileCounter = 0;
+				i = number - 1;
+				j = second + 1;
+				while (i >= 0 && j <= 7) {
+					//cout << tiles[number][second] << " " << tiles[i][j] << '\n';
+					if (tiles[number][second] == tiles[i][j]) {
+						break;
+					}
+					//Tile has nothing on it
+					if (tiles[i][j] == 0) {
+						tileExist = false;
+						break;
+					}
+					i--;
+					j++;
+					tileCounter++;
+				}
+
+
+				if ((i != -1 || tiles[i + 1][j - 1] == p) && (j != 8 || tiles[i + 1][j - 1] == p) && tileCounter != 0 && tileExist != false) {
+					minValidMove = true;
+					if (change == true) {
+						changeTiles(number, second, 5, tileCounter, player);
+					}
+				}
+				//cout << "UPRIGHT" << tileCounter << '\n';
+
+			}
+			//DOWNLEFT of tile
+			if (tiles[number + 1][second - 1] == opposite) {
+				tileExist = true;
+				tileCounter = 0;
+				i = number + 1;
+				j = second - 1;
+				while (i <= 7 && j >= 0) {
+					if (tiles[number][second] == tiles[i][j]) {
+						break;
+					}
+					//Tile has nothing on it
+					if (tiles[i][j] == 0) {
+						tileExist = false;
+						break;
+					}
+					i++;
+					j--;
+					tileCounter++;
+				}
+
+				if ((i != 8 || tiles[i - 1][j + 1] == p) && (j != -1 || tiles[i - 1][j + 1] == p) && tileCounter != 0 && tileExist != false) {
+					minValidMove = true;
+					if (change == true) {
+						changeTiles(number, second,6, tileCounter, player);
+					}
+				}
+				//cout << "DOWNLEFT" << tileCounter << '\n';
+
+			}
+			//DOWNRIGHT of tile
+			if (tiles[number + 1][second + 1] == opposite) {
+				tileExist = true;
+				tileCounter = 0;
+				i = number + 1;
+				j = second + 1;
+				while (i <= 7 && j <= 7) {
+					if (tiles[number][second] == tiles[i][j]) {
+						break;
+					}
+					//Tile has nothing on it
+					if (tiles[i][j] == 0) {
+						tileExist = false;
+						break;
+					}
+					i++;
+					j++;
+					tileCounter++;
+				}
+
+				if ((i != 8 || tiles[i - 1][j - 1] == p) && (j != 8 || tiles[i - 1][j - 1] == p) && tileCounter != 0 && tileExist != false) {
+					minValidMove = true;
+
+					if (change == true) {
+						changeTiles(number, second, 7, tileCounter, player);
+					}
+				}
+				//cout << "DOWNRIGHT" << tileCounter << '\n';
+
+			}
+
+
+			
+		}
+
+
+		
 		//cout << minValidMove;
 
 
 		return minValidMove;
 	}
+
+	bool validMovesLeft(int number, int second, bool player) {
+		bool minValidMove = false;
+		int tileCounter;
+		int i;
+		int j;
+		int p;
+		if (player == true) {
+			p = 1;
+		}
+		else if (player == false) {
+			p = 2;
+		}
+		for (int k = 0; k < finalMoves.size(); k++) {
+
+			
+			bool tileExist = true;
+
+			//LEFT OF TILE
+
+			if (finalMoves[k] == 0 && tiles[number][second - 1] != 0 && tiles[number][second - 1] != p) {
+
+				tileCounter = 0;
+				i = second - 1;
+
+				while (i >= 0) {
+					if (tiles[number][second] == tiles[number][i]) {
+						break;
+					}
+					//Tile has nothing on it
+					if (tiles[number][i] == 0) {
+						tileExist = false;
+						break;
+					}
+					i--;
+					tileCounter++;
+
+
+				}
+				//cout << "I: " << i;
+
+				if ((i != -1 || tiles[number][i + 1] == p) && tileCounter != 0 && tileExist != false) {
+					return true;
+
+				}
+
+				//cout << "LEFT" << tileCounter << '\n';
+			}
+			//RIGHT OF TILE
+			else if (finalMoves[k] == 1 && tiles[number][second + 1] != 0 && tiles[number][second + 1] != p) {
+				tileCounter = 0;
+				i = second + 1;
+				while (i <= 7) {
+					if (tiles[number][second] == tiles[number][i]) {
+						break;
+					}
+					//Tile has nothing on it
+					if (tiles[number][i] == 0) {
+						tileExist = false;
+						break;
+					}
+					i++;
+					tileCounter++;
+
+
+				}
+				if ((i != 8 || tiles[number][i - 1] == p) && tileCounter != 0 && tileExist != false) {
+					return true;
+				}
+
+				//cout << "RIGHT" << tileCounter << '\n';
+
+			}
+			//UP OF TILE
+			else if (finalMoves[k] == 2 && tiles[number - 1][second] != 0 && tiles[number - 1][second] != p) {
+				tileCounter = 0;
+				i = number - 1;
+
+				while (i >= 0) {
+					//cout << tiles[number][second] << " " << tiles[i][second];
+					if (tiles[number][second] == tiles[i][second]) {
+
+						break;
+					}
+					//Tile has nothing on it
+					if (tiles[i][second] == 0) {
+						tileExist = false;
+						break;
+					}
+					i--;
+					tileCounter++;
+
+
+				}
+
+				if ((i != -1 || tiles[i + 1][second] == p) && tileCounter != 0 && tileExist != false) {
+					return true;
+				}
+				//cout << "UP" << tileCounter << '\n';
+
+			}
+			//DOWN OF TILE
+			else if (finalMoves[k] == 3 && tiles[number + 1][second] != 0 && tiles[number + 1][second] != p) {
+
+				tileCounter = 0;
+				i = number + 1;
+				while (i <= 7) {
+
+					if (tiles[number][second] == tiles[i][second]) {
+						break;
+					}
+					//Tile has nothing on it
+					if (tiles[i][second] == 0) {
+						tileExist = false;
+						break;
+					}
+					i++;
+					tileCounter++;
+
+
+				}
+
+				if ((i != 8 || tiles[i - 1][second] == p) && tileCounter != 0 && tileExist != false) {
+					return true;
+				}
+				//cout << "DOWN" << tileCounter << '\n';
+
+			}
+			//UPLEFT of Tile
+			else if (finalMoves[k] == 4 && tiles[number - 1][second - 1] != 0 && tiles[number - 1][second - 1] != p) {
+				tileCounter = 0;
+				i = number - 1;
+				j = second - 1;
+				while (i >= 0 && j >= 0) {
+					// Clean break
+					if (tiles[number][second] == tiles[i][j]) {
+						break;
+					}
+					//Tile has nothing on it
+					if (tiles[i][j] == 0) {
+						tileExist = false;
+						break;
+					}
+					i--;
+					j--;
+					tileCounter++;
+				}
+
+				if ((i != -1 || tiles[i + 1][j + 1] == p) && (j != -1 || tiles[i + 1][j + 1] == p) && tileCounter != 0 && tileExist != false) {
+					return true;
+				}
+
+				//cout << "UPLEFT" << tileCounter << '\n';
+
+			}
+			//UPRIGHT of tile
+			else if (finalMoves[k] == 5 && tiles[number - 1][second + 1] != 0 && tiles[number - 1][second + 1] != p) {
+				tileCounter = 0;
+				i = number - 1;
+				j = second + 1;
+				while (i >= 0 && j <= 7) {
+					//cout << tiles[number][second] << " " << tiles[i][j] << '\n';
+					if (tiles[number][second] == tiles[i][j]) {
+						break;
+					}
+					//Tile has nothing on it
+					if (tiles[i][j] == 0) {
+						tileExist = false;
+						break;
+					}
+					i--;
+					j++;
+					tileCounter++;
+				}
+
+
+				if ((i != -1 || tiles[i + 1][j - 1] == p) && (j != 8 || tiles[i + 1][j - 1] == p) && tileCounter != 0 && tileExist != false) {
+					return true;
+				}
+				//cout << "UPRIGHT" << tileCounter << '\n';
+
+			}
+			//DOWNLEFT of tile
+			else if (finalMoves[k] == 6 && tiles[number + 1][second - 1] != 0 && tiles[number + 1][second - 1] != p) {
+				tileCounter = 0;
+				i = number + 1;
+				j = second - 1;
+				while (i <= 7 && j >= 0) {
+					if (tiles[number][second] == tiles[i][j]) {
+						break;
+					}
+					//Tile has nothing on it
+					if (tiles[i][j] == 0) {
+						tileExist = false;
+						break;
+					}
+					i++;
+					j--;
+					tileCounter++;
+				}
+
+				if ((i != 8 || tiles[i - 1][j + 1] == p) && (j != -1 || tiles[i - 1][j + 1] == p) && tileCounter != 0 && tileExist != false) {
+					return true;
+				}
+				//cout << "DOWNLEFT" << tileCounter << '\n';
+
+			}
+			//DOWNRIGHT of tile
+			else if (finalMoves[k] == 7 && tiles[number + 1][second + 1] != 0 && tiles[number + 1][second + 1] != p) {
+				tileCounter = 0;
+				i = number + 1;
+				j = second + 1;
+				while (i <= 7 && j <= 7) {
+					if (tiles[number][second] == tiles[i][j]) {
+						break;
+					}
+					//Tile has nothing on it
+					if (tiles[i][j] == 0) {
+						tileExist = false;
+						break;
+					}
+					i++;
+					j++;
+					tileCounter++;
+				}
+
+				if ((i != 8 || tiles[i - 1][j - 1] == p) && (j != 8 || tiles[i - 1][j - 1] == p) && tileCounter != 0 && tileExist != false) {
+					return true;
+				}
+				//cout << "DOWNRIGHT" << tileCounter << '\n';
+
+			}
+			
+
+		}
+		
+		return minValidMove;
+	}
+
 
 
 
@@ -759,13 +1640,12 @@ public:
 
 
 
-
-int main()
+/*
+int manual()
 {
 
-	cout << "Hello World!\n";
+	cout << "Starting Manual Game";
 	Board board;
-	board.displayBoard();
 	bool gameOverPlayer = false;
 	bool gameOverRobot = false;
 	bool gameOver = false;
@@ -776,14 +1656,16 @@ int main()
 	//cin >> choice;
 	while (gameOverRobot == false || gameOverPlayer == false) {
 		noMorePlayerTiles = false;
-
-		if (choice == 0) {
-			gameOverPlayer = false;
-			if (board.winCondition(true) == 1) {
-				noMorePlayerTiles = true;
-				gameOverPlayer = true;
-			}
+		board.displayBoard();
 		
+		gameOverPlayer = false;
+		if (board.winCondition(true) == 1) {
+			noMorePlayerTiles = true;
+			gameOverPlayer = true;
+			cout << "No Player Moves Left"<<'\n';
+
+		}
+		else {
 			bool validInput = false;
 			bool spaceNotTaken = false;
 			string playerInput;
@@ -823,24 +1705,213 @@ int main()
 				else {
 					cout << "ERROR: Invalid Row (Between 1 and 7)" << '\n';
 				}
+			}
+		}
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				board.reset[i][j] = board.tiles[i][j];
+			}
+		}
+		cout << "MCTS:" << '\n';
+		bool result = board.MCTS(100);
+		cout << '\n' << "RESULT:" << result << '\n';
+		if (result == 0) {
+			gameOverRobot = true;
+			for (int i = 0; i < 8; i++) {
+				for (int j = 0; j < 8; j++) {
+					board.tiles[i][j] = board.reset[i][j];
+				}
+			}
+		}
 
+		
+	}
 
+	cout << '\n' << "-------GAME OVER-------" << '\n';
+	cout << board.calculateWinner()<<" WINS, WITH A SCORE OF:"<< " " << board.winner();
+	return 0;
+};
+*/
 
+int testing()
+{
+	bool robotWins = true;
+	int counter = 0;
+	while (robotWins == true) {
 
+		srand((unsigned int)time(NULL));
+		cout << '\n'<<"Starting Test Number: "<<counter<<'\n';
+		Board board;
+		bool gameOverPlayer = false;
+		bool gameOverRobot = false;
+		bool gameOver = false;
+		int choice = 0;
+		bool validTile = false;
+		
+		int randomNumber1;
+		int randomNumber2;
+		//cout << "Who goes first? 0 or 1" << '\n'; 
+		//cin >> choice;
+		while (gameOverRobot == false || gameOverPlayer == false) {
+			
+			board.displayBoard();
+
+			gameOverPlayer = false;
+			if (board.winCondition1() == false) {
+				cout << "Here";
+				gameOverPlayer = true;
+				if (gameOverRobot == true) {
+					break;
+				}
+				//cout << "No Player Moves Left" << '\n';
+
+			}
+			else {
+				
+				bool validInput = false;
+				bool spaceNotTaken = false;
+				string playerInput;
+				while (validInput != true) {
+					//Create Random Numbers
+					randomNumber1 = rand() % 8;
+					randomNumber2 = rand() % 8;
+					if (board.playPlayerTile(randomNumber1, randomNumber2) == true) {
+
+						//board.validMove(randomNumber1, randomNumber2);
+						validTile = board.validPlayerMoves(randomNumber1, randomNumber2, true, false);
+						if (validTile == false) {
+							board.undoTile(randomNumber1, randomNumber2);
+							//cout << "INVALID MOVE, TRY AGAIN" << '\n';
+						}
+						else {
+							board.validPlayerMoves(randomNumber1, randomNumber2, true, true);
+							cout << "Player Plays: " << randomNumber1 << ":" << randomNumber2;
+							//displayBoard();
+							validInput = true;
+							
+						}
+
+					}
+				}
 
 
 			}
+			for (int i = 0; i < 8; i++) {
+				for (int j = 0; j < 8; j++) {
+					board.reset[i][j] = board.tiles[i][j];
+				}
+			}
+			board.displayBoard();
 			cout << "MCTS:" << '\n';
-			board.MCTS(1);
+			gameOverRobot = false;
+			bool result = board.MCTS(1000);
+			cout << '\n' << "RESULT:" << result << '\n';
+			if (result == 0) {
+				gameOverRobot = true;
+				for (int i = 0; i < 8; i++) {
+					for (int j = 0; j < 8; j++) {
+						board.tiles[i][j] = board.reset[i][j];
+					}
+				}
+			}
+
+
 
 		}
+
+		cout << '\n' << "-------GAME OVER-------" << '\n';
+		cout << board.winner() << " WINS, WITH A SCORE OF:" << " " << board.calculateWinner()<< '\n';
+		cout << "GAMES WON" << counter  << '\n';
+		if (board.winner() == 1) {
+			robotWins = false;
+			
+		}
+		counter++;
+
 		
+	}
+	
+	return 0;
+};
 
 
+int testingAgainstBestAI() 
+{
+	bool robotWins = true;
+	int counter = 0;
+	int ai=0;
+	int mcts=0;
+	while (counter < 25) {
+		srand((unsigned int)time(NULL));
+		cout << '\n' << "Starting Test Number: " << counter << '\n';
+		Board board;
+		bool gameOverPlayer = false;
+		bool gameOverRobot = false;
+		bool gameOver = false;
+		int choice = 0;
+		bool validTile = false;
+		int randomNumber1;
+		int randomNumber2;
+		bool result1;
+		bool result2;
+		board.displayBoard();
+		while (gameOverRobot == false || gameOverPlayer == false) {
+			
+			cout << "BEST AI:" << '\n';
+			result1 = board.bestAI(250);
+
+			cout << '\n' << "BEST AI RESULT: " << result1 << '\n';
+			if (result1 == 0) {
+				gameOverPlayer = true;
+				cout << "Could not play bestAI move";
+				for (int i = 0; i < 8; i++) {
+					for (int j = 0; j < 8; j++) {
+						board.tiles[i][j] = board.reset[i][j];
+					}
+				}
+			}
+
+			
+			board.displayBoard();
+			
+			cout << "MCTS:" << '\n';
+			gameOverRobot = false;
+			result2 = board.MCTS(250);
+			cout << '\n' << "MCTS RESULT: " << result2 << '\n';
+			if (result2 == 0) {
+				gameOverRobot = true;
+				cout << "Could not play robot move";
+				for (int i = 0; i < 8; i++) {
+					for (int j = 0; j < 8; j++) {
+						board.tiles[i][j] = board.reset[i][j];
+					}
+				}
+			}
+			board.displayBoard();
+
+		}
+
+
+		string winner;
+		if (board.winner() == 0) {
+			winner = "BESTAI";
+			ai++;
+		}
+		else {
+			winner = "MCTS";
+			mcts++;
+		}
+		cout << '\n' << "-------GAME OVER-------" << '\n';
+		cout << winner<< " WINS, WITH A SCORE OF:" << " " << board.calculateWinner() << '\n';
+		cout << "GAMES WON FOR BESTAI" << ai << '\n';
+		cout << "GAMES WON FOR MCTS" << mcts << '\n';
+		counter++;
 
 	}
-
-
-
 	return 0;
+};
+
+int main() {
+	cout<<"-------WELCOME-------" << '\n';
+	testingAgainstBestAI();
 };
